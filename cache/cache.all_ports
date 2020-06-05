@@ -1,0 +1,10 @@
+# Nmap 7.80 scan initiated Mon May 25 10:26:36 2020 as: nmap -p- --max-retries 5 --min-rate 5000 -oN cache.all_ports cache.htb
+Warning: 10.10.10.188 giving up on port because retransmission cap hit (5).
+Nmap scan report for cache.htb (10.10.10.188)
+Host is up (0.23s latency).
+Not shown: 64744 closed ports, 789 filtered ports
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+
+# Nmap done at Mon May 25 10:27:02 2020 -- 1 IP address (1 host up) scanned in 26.55 seconds

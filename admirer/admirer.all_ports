@@ -1,0 +1,11 @@
+# Nmap 7.80 scan initiated Thu May 28 15:44:53 2020 as: nmap -p- --max-retries 5 --min-rate 5000 -oN admirer.all_ports admirer.htb
+Warning: 10.10.10.187 giving up on port because retransmission cap hit (5).
+Nmap scan report for admirer.htb (10.10.10.187)
+Host is up (0.24s latency).
+Not shown: 64868 closed ports, 664 filtered ports
+PORT   STATE SERVICE
+21/tcp open  ftp
+22/tcp open  ssh
+80/tcp open  http
+
+# Nmap done at Thu May 28 15:45:19 2020 -- 1 IP address (1 host up) scanned in 25.66 seconds
