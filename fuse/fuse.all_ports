@@ -1,0 +1,28 @@
+# Nmap 7.80 scan initiated Tue Jun 30 09:12:30 2020 as: nmap -p- --max-retries 5 --min-rate 5000 -oN fuse.all_ports fuse.htb
+Nmap scan report for fuse.htb (10.10.10.193)
+Host is up (0.27s latency).
+Not shown: 65514 filtered ports
+PORT      STATE SERVICE
+53/tcp    open  domain
+80/tcp    open  http
+88/tcp    open  kerberos-sec
+135/tcp   open  msrpc
+139/tcp   open  netbios-ssn
+389/tcp   open  ldap
+445/tcp   open  microsoft-ds
+464/tcp   open  kpasswd5
+593/tcp   open  http-rpc-epmap
+636/tcp   open  ldapssl
+3268/tcp  open  globalcatLDAP
+3269/tcp  open  globalcatLDAPssl
+5985/tcp  open  wsman
+9389/tcp  open  adws
+49666/tcp open  unknown
+49667/tcp open  unknown
+49675/tcp open  unknown
+49676/tcp open  unknown
+49680/tcp open  unknown
+49698/tcp open  unknown
+49760/tcp open  unknown
+
+# Nmap done at Tue Jun 30 09:13:28 2020 -- 1 IP address (1 host up) scanned in 58.37 seconds
