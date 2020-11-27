@@ -1,0 +1,10 @@
+# Nmap 7.91 scan initiated Fri Nov 27 10:08:17 2020 as: nmap -p- --max-retries 5 --min-rate 5000 -oN worker.all_ports worker.htb
+Nmap scan report for worker.htb (10.10.10.203)
+Host is up (0.29s latency).
+Not shown: 65532 filtered ports
+PORT     STATE SERVICE
+80/tcp   open  http
+3690/tcp open  svn
+5985/tcp open  wsman
+
+# Nmap done at Fri Nov 27 10:09:05 2020 -- 1 IP address (1 host up) scanned in 47.55 seconds
